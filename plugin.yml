@@ -1,0 +1,6 @@
+name: InfiniteDurability
+main: is.gussi.bukkit.plugin.infinitedurability.InfiniteDurability
+version: 0.1
+website: http://bukkit.gussi.is/infinitedurability
+author: Gussi
+description: Bug free infinite durability
