@@ -6,15 +6,21 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.inventory.ItemStack;
 
 public class InfiniteDurabilityBlockListener extends BlockListener {
+	private InfiniteDurability plugin;
+
+	public InfiniteDurabilityBlockListener(InfiniteDurability instance) {
+		this.plugin = instance;
+	}
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.isCancelled()) {
             return;
         }
+
 		Player player = event.getPlayer();
 		ItemStack held = player.getItemInHand();
-        if ((held.getTypeId() >= 276 && held.getTypeId() <= 279) || held.getTypeId() >= 283 && held.getTypeId() <= 286) {
+        if ( this.plugin.items.contains(held.getTypeId()) ) {
             held.setDurability((short) 0);
             player.setItemInHand(held);
         }
