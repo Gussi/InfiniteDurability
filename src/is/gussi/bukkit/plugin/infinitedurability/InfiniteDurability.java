@@ -4,25 +4,27 @@ import java.util.HashSet;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
-import org.bukkit.event.Event;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class InfiniteDurability extends JavaPlugin {
+public class InfiniteDurability extends JavaPlugin implements Listener {
 	public Logger log = Logger.getLogger("Minecraft.InfiniteDurability");
 	public HashSet<Integer> items = new HashSet<Integer>();
-	private Listener blockListener = new InfiniteDurabilityBlockListener(this);
 
 	@Override
 	public void onDisable() {
 		this.log.info(this.getDescription().getName() + " v" + this.getDescription().getVersion() + " disabled.");
-
 	}
 
 	@Override
 	public void onEnable() {
 		this.log.info(this.getDescription().getName() + " v" + this.getDescription().getVersion() + " enabled.");
-		this.getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, this.blockListener , Event.Priority.Highest, this);
+		this.getServer().getPluginManager().registerEvents(this, this);
 		this.loadItems();
 	}
 
@@ -50,5 +52,19 @@ public class InfiniteDurability extends JavaPlugin {
 		this.items.add(Material.DIAMOND_AXE.getId());
 		this.items.add(Material.DIAMOND_HOE.getId());
 		this.items.add(Material.DIAMOND_SWORD.getId());
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (event.isCancelled()) {
+            return;
+        }
+
+		Player player = event.getPlayer();
+		ItemStack held = player.getItemInHand();
+        if ( this.items.contains(held.getTypeId()) ) {
+            held.setDurability((short) 0);
+            player.setItemInHand(held);
+        }
 	}
 }
